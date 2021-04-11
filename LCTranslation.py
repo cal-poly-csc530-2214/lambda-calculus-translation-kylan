@@ -13,7 +13,8 @@ testfiles = ["test1.in",
         "test7.in",
         "test8.in",
         "test9.in",
-        "test10.in"]
+        "test10.in",
+        "test11.in"]
 
 def tokenize(i):
     parsed = []
@@ -30,16 +31,21 @@ def identify(parsed):
         return sexpdata.dumps(parsed)
 
     head = parsed[0]
-    print(parsed)
-    # LC = (/ id => LC) -> "lambda <id> : LC"
+    # LC = (/ id => LC) -> "(lambda <id> : LC)"
     if head == sexpdata.Symbol('/'):
-        return "lambda " + identify(parsed[1]) + ": " + identify(parsed[3])
+        lc1 = identify(parsed[1])
+        lc2 = identify(parsed[3])
+        return "(lambda " + lc1 + ": " + lc2 + ")"
     # LC = (+ LC LC) -> "(LC1 + LC2)"
     elif head == sexpdata.Symbol('+'):
-        return "(" + identify(parsed[1]) + " + " + identify(parsed[2]) + ")"
+        lc1 = identify(parsed[1])
+        lc2 = identify(parsed[2])
+        return "(" + lc1 + " + " + lc2 + ")"
     # LC = (* LC LC) -> "(LC1 * LC2)"
     elif head == sexpdata.Symbol('*'):
-        return "(" + identify(parsed[1]) + " * " + identify(parsed[2]) + ")"
+        lc1 = identify(parsed[1])
+        lc2 = identify(parsed[2])
+        return "(" + lc1 + " * " + lc2 + ")"
     # LC = (ifleq0 LC LC LC) -> 
     # if (LC1 <= 0):
     #    LC2
